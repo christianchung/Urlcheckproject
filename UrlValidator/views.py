@@ -18,16 +18,20 @@ def index(request):
 
 
 class Scrape:
-    searched_links = []
-    broken_links = []
-    count = 0
 
-    @staticmethod
-    def get_links_from_html(html):
+    def __init__(self):
+        self.searched_links = []
+        self.broken_links = []
+        self.count = 0
+
+    # broken_links = []
+    # count = 0
+
+    @classmethod
+    def get_links_from_html(cls, html):
         def get_link(el):
             return el["href"]
         return list(map(get_link, BeautifulSoup(html, features="html.parser").select("a[href]")))
-
 
     def link_to_obj(self, check_url, parent_url,status_code):
         linkobj = {
@@ -37,7 +41,6 @@ class Scrape:
         }
         return linkobj
 
-
     def find_broken_links(self, domain_to_search, check_url, parent_url):
         if (not (check_url in self.searched_links)) and (not check_url.startswith("mailto:")) and (not ("javascript:" in check_url)) and (
                 not check_url.endswith(".png")) and (not check_url.endswith(".jpg")) and (not check_url.endswith(".jpeg")):
@@ -45,8 +48,8 @@ class Scrape:
                 request_obj = requests.get(check_url)
                 self.searched_links.append(check_url)
                 if request_obj.status_code > 299:
-                    self.broken_links.append(self.link_to_obj(check_url,parent_url,request_obj.status_code))
-                    self.count+=1
+                    self.broken_links.append(self.link_to_obj(check_url, parent_url, request_obj.status_code))
+                    self.count += 1
                     # print(self.broken_links[-1])
                 else:
                     # print("NOT BROKEN: link " + URL + " from " + parentURL)
