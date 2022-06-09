@@ -7,8 +7,9 @@ from urllib.parse import urljoin
 
 
 def get_scrape(request):
+    address = request.GET["address"]
     scrape = Scrape()
-    scrape.find_broken_links(urlparse("https://jacobpartin.com/").netloc, "https://jacobpartin.com/", "")
+    scrape.find_broken_links(urlparse(address).netloc, address, "")
     return render(request, "urlvalidator/urls.html", context={"broken_links": scrape.broken_links})
 
 
