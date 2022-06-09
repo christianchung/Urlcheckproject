@@ -3,11 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel='stylesheet' type='text/css' href='../../static/urlvalidator/urls.css'>
 </head>
+<style>
+    #title{
+        text-align: center;
+    }
+   table, th, td {
+  border:1px solid black;
+}
+</style>
 <body>
-    {% for link in broken_links%}
-    <li><a href="{{ link }}">{{ link }}</a></li>
+<h1 id="title">Website Broken URLs</h1>
+<table style="width:100%">
+  <tr>
+    <th>Check URL</th>
+    <th>Parent URL</th>
+    <th>Error Code</th>
+  </tr>
+  <tr>
+    <td>
+        {% for link in broken_links%}
+    <a href="{{ link.url }}">{{ link.url }}</a><br>
     {% endfor %}
+    </td>
+    <td>
+        {% for link in broken_links %}
+        <a href="{{ link.parent_url }}">{{ link.parent_url }}</a><br>
+        {% endfor %}
+    </td>
+    <td>
+
+        {% for link in broken_links %}
+        <a style="pointer-events: none" href="{{ link.status_code }}">{{ link.status_code }}</a><br>
+        {% endfor %}
+
+    </td>
+  </tr>
+  <tr>
+  </tr>
+</table>
 
 </body>
 </html>
