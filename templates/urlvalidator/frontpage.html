@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en-us">
   <head>
     <meta charset="UTF-8">
     <title>Contact form</title>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
-      <link rel='stylesheet' type='text/css' href='css/frontpage.css'>
+      <link rel='stylesheet' type='text/css' href='../../static/urlvalidator/frontpage.css'>
   </head>
   <body>
     <div class="main-block">
@@ -14,20 +14,14 @@
         <i class="fas fa-at"></i>
         <i class="fas fa-mail-bulk"></i>
       </div>
-      <form action="/">
+      <form action="/check" method="post" enctype="multipart/form-data">
         <h1>Url Checker</h1>
-        <h3>enter urls below ⬇️</h3>
         <div class="info">
-          <input class="fname" type="text" name="name">
-          <input type="text" name="name" >
-          <input type="text" name="name">
-          <input type="text" name="name">
+            <label>
+                <input type="text" name="test">
+            </label>
         </div>
-        <h3>Output</h3>
-        <div>
-          <textarea rows="4"></textarea>
-        </div>
-        <button type="submit" href="/">Submit</button>
+        <input type="submit" value="Submit">
       </form>
     </div>
   </body>
