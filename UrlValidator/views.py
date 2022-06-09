@@ -29,10 +29,11 @@ class Scrape:
         return list(map(get_link, BeautifulSoup(html, features="html.parser").select("a[href]")))
 
 
-    def link_to_obj(self, check_url, parent_url):
+    def link_to_obj(self, check_url, parent_url,status_code):
         linkobj = {
             'url' : check_url,
-            'parent_url' : parent_url
+            'parent_url' : parent_url,
+            'status_code' : status_code
         }
         return linkobj
 
@@ -43,10 +44,9 @@ class Scrape:
             try:
                 request_obj = requests.get(check_url)
                 self.searched_links.append(check_url)
-                if request_obj.status_code == 404:
-                    self.broken_links.append(self.link_to_obj(check_url,parent_url))
+                if request_obj.status_code > 299:
+                    self.broken_links.append(self.link_to_obj(check_url,parent_url,request_obj.status_code))
                     self.count+=1
-                    # self.broken_links.append("BROKEN: link " + check_url + " from " + parent_url)
                     # print(self.broken_links[-1])
                 else:
                     # print("NOT BROKEN: link " + URL + " from " + parentURL)
