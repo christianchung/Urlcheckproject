@@ -40,7 +40,8 @@
             return {
                 broken_links: [],
                 progress_time: 0,
-                timeout: undefined
+                timeout: undefined,
+                terms: true
             };
         },
         mounted() {
@@ -48,15 +49,18 @@
         computed: {},
         methods: {
             async getData() {
-                this.appear()
-                await fetch("/check?" +
-                    new URLSearchParams({address: document.getElementById("address").value}), {method: "GET"})
-                    .then(data => data.json())
-                    .then(data => {
-                        this.download(data)
-                        this.appear()
-                    })
-
+                if(this.terms) {
+                    this.terms = false
+                    this.appear()
+                    await fetch("/check?" +
+                        new URLSearchParams({address: document.getElementById("address").value}), {method: "GET"})
+                        .then(data => data.json())
+                        .then(data => {
+                            this.download(data)
+                            this.appear()
+                            this.terms = true
+                        })
+                }
             },
             format(data) {
                 let string = '';
@@ -86,7 +90,6 @@
                 } else {
                     window.clearInterval(this.timeout)
                   elem.style.visibility = "hidden";
-
                 }
 
             }

@@ -43,7 +43,10 @@ class Scrape:
         if (not (check_url in self.searched_links)) and (not check_url.startswith("mailto:")) and (not ("javascript:" in check_url)) and (
                 not check_url.endswith(".png")) and (not check_url.endswith(".jpg")) and (not check_url.endswith(".jpeg")):
             try:
-                request_obj = requests.get(check_url, timeout=5)
+                request_obj = requests.get(check_url, timeout=5, headers={
+  'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36 QIHU 360SE'
+})
+
                 self.searched_links.append(check_url)
                 if request_obj.status_code > 299:
                     self.broken_links.append(self.link_to_obj(check_url, parent_url, request_obj.status_code))
