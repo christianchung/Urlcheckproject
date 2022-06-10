@@ -1,47 +1,48 @@
-<!DOCTYPE html>
 <html lang="en-us">
 <head>
     <meta charset="UTF-8">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
     <title>Contact form</title>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css"
           integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/static/urlvalidator/frontpage.css">
-
 </head>
-<style>
-
-
-</style>
-<script>
-
-
-</script>
-
-
 <body>
-
-<main id="loading-zone" aria-busy="true">
-    <progress aria-describedby="loading-zone"></progress>
-</main>
-
-<div class="main-block">
-    <div class="left-part">
-        <i class="fas fa-envelope"></i>
-        <i class="fas fa-at"></i>
-        <i class="fas fa-mail-bulk"></i>
-    </div>
-    <form action="/check" enctype="multipart/form-data">
-        <h1>Url Checker</h1>
-        <div class="info">
-            <label>
-                <input type="text" name="address">
-            </label>
+<div id="app">
+    <main id="loading-zone" aria-busy="true">
+        <progress aria-describedby="loading-zone"></progress>
+    </main>
+    <div class="main-block">
+        <div class="left-part">
+            <i class="fas fa-envelope"></i>
+            <i class="fas fa-at"></i>
+            <i class="fas fa-mail-bulk"></i>
         </div>
-        <input type="submit" value="Submit" aria-busy="true">
+        <form action="/check" enctype="multipart/form-data">
+            <h1>Url Checker</h1>
+            <div class="info">
+                <label>
+                    <input type="text" name="address">
+                </label>
+            </div>
+            <input type="submit" value="Submit" aria-busy="true">
 
-    </form>
-
+        </form>
+    </div>
 </div>
+<script type="module">
+    const app = new Vue({
+        el: "#app", delimiters: ['[[', ']]'],
+        data() {
+            return {
+            };
+        },
+        mounted() {
+        },
+        computed: {},
+        methods: {}
+    })
+</script>
 </body>
 </html>

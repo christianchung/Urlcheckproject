@@ -1,49 +1,68 @@
-<!DOCTYPE html>
-<html lang="en">
+<html lang="en-us">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+    <title>Contact form</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css"
+          integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/static/urlvalidator/frontpage.css">
+    <style>
+        #title {
+            text-align: center;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+    </style>
 </head>
-<style>
-    #title{
-        text-align: center;
-    }
-   table, th, td {
-  border:1px solid black;
-}
-</style>
 <body>
+<div id="app">
 
+    <h1 id="title">Website Broken URLs</h1>
+    <table style="width:100%">
+        <tr>
+            <th>Check URL</th>
+            <th>Parent URL</th>
+            <th>Error Code</th>
+        </tr>
+        <tr>
+            <td>
+                {% for link in broken_links %}
+                    <a href="{{ link.url }}">{{ link.url }}</a><br>
+                {% endfor %}
+            </td>
+            <td>
+                {% for link in broken_links %}
+                    <a href="{{ link.parent_url }}">{{ link.parent_url }}</a><br>
+                {% endfor %}
+            </td>
+            <td>
 
-<h1 id="title">Website Broken URLs</h1>
-<table style="width:100%">
-  <tr>
-    <th>Check URL</th>
-    <th>Parent URL</th>
-    <th>Error Code</th>
-  </tr>
-  <tr>
-    <td>
-        {% for link in broken_links%}
-    <a href="{{ link.url }}">{{ link.url }}</a><br>
-    {% endfor %}
-    </td>
-    <td>
-        {% for link in broken_links %}
-        <a href="{{ link.parent_url }}">{{ link.parent_url }}</a><br>
-        {% endfor %}
-    </td>
-    <td>
+                {% for link in broken_links %}
+                    <a style="pointer-events: none" href="{{ link.status_code }}">{{ link.status_code }}</a><br>
+                {% endfor %}
 
-        {% for link in broken_links %}
-        <a style="pointer-events: none" href="{{ link.status_code }}">{{ link.status_code }}</a><br>
-        {% endfor %}
+            </td>
+        </tr>
+        <tr>
+        </tr>
+    </table>
 
-    </td>
-  </tr>
-  <tr>
-  </tr>
-</table>
-
+</div>
+<script type="module">
+    const app = new Vue({
+        el: "#app", delimiters: ['[[', ']]'],
+        data() {
+            return {
+            };
+        },
+        mounted() {
+        },
+        computed: {},
+        methods: {}
+    })
+</script>
 </body>
 </html>
