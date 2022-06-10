@@ -19,16 +19,16 @@
             <i class="fas fa-at"></i>
             <i class="fas fa-mail-bulk"></i>
         </div>
-        <form action="/check" enctype="multipart/form-data">
+        <div class="form-block">
             <h1>Url Checker</h1>
             <div class="info">
                 <label>
-                    <input type="text" name="address">
+                    <input type="text" name="address" id="address">
                 </label>
             </div>
-            <input type="submit" value="Submit" aria-busy="true">
+            <input type="button" value="Submit" @click="getData">
+        </div>
 
-        </form>
     </div>
 </div>
 <script type="module">
@@ -36,12 +36,37 @@
         el: "#app", delimiters: ['[[', ']]'],
         data() {
             return {
+                broken_links: []
             };
         },
         mounted() {
         },
         computed: {},
-        methods: {}
+        methods: {
+            async getData() {
+                await fetch("/check?" +
+                    new URLSearchParams({address: document.getElementById("address").value}), {method: "GET"})
+                    .then(data => data.json())
+                    .then(data => this.download(data))
+
+            },
+            format(data){
+                let string = '';
+                for(let link of data.broken_links){
+                    string = string.concat("Error(", link.status_code, "): " , link.url, " from ", link.parent_url, "\n")
+                }
+                return string
+            },
+            download(data) {
+                let element = document.createElement('a');
+                element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(this.format(data)));
+                element.setAttribute('download', "broken_links.txt");
+                element.style.display = 'none';
+                document.body.appendChild(element);
+                element.click();
+                document.body.removeChild(element);
+            }
+        }
     })
 </script>
 </body>

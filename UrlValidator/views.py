@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import render
 import requests
 import sys
@@ -10,7 +11,7 @@ def get_scrape(request):
     address = request.GET["address"]
     scrape = Scrape()
     scrape.find_broken_links(urlparse(address).netloc, address, "")
-    return render(request, "urlvalidator/urls.html", context={"broken_links": scrape.broken_links})
+    return JsonResponse({"broken_links": scrape.broken_links})
 
 
 def index(request):
@@ -24,22 +25,19 @@ class Scrape:
         self.broken_links = []
         self.count = 0
 
-    # broken_links = []
-    # count = 0
-
     @classmethod
     def get_links_from_html(cls, html):
         def get_link(el):
             return el["href"]
         return list(map(get_link, BeautifulSoup(html, features="html.parser").select("a[href]")))
 
-    def link_to_obj(self, check_url, parent_url,status_code):
-        linkobj = {
+    @classmethod
+    def link_to_obj(cls, check_url, parent_url,status_code):
+        return {
             'url' : check_url,
             'parent_url' : parent_url,
             'status_code' : status_code
         }
-        return linkobj
 
     def find_broken_links(self, domain_to_search, check_url, parent_url):
         if (not (check_url in self.searched_links)) and (not check_url.startswith("mailto:")) and (not ("javascript:" in check_url)) and (
