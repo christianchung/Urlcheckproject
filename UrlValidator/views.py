@@ -34,23 +34,21 @@ class Scrape:
     @classmethod
     def link_to_obj(cls, check_url, parent_url,status_code):
         return {
-            'url' : check_url,
-            'parent_url' : parent_url,
-            'status_code' : status_code
+            'url': check_url,
+            'parent_url': parent_url,
+            'status_code': status_code
         }
 
     def find_broken_links(self, domain_to_search, check_url, parent_url):
         if (not (check_url in self.searched_links)) and (not check_url.startswith("mailto:")) and (not ("javascript:" in check_url)) and (
                 not check_url.endswith(".png")) and (not check_url.endswith(".jpg")) and (not check_url.endswith(".jpeg")):
             try:
-                request_obj = requests.get(check_url)
+                request_obj = requests.get(check_url, timeout=5)
                 self.searched_links.append(check_url)
                 if request_obj.status_code > 299:
                     self.broken_links.append(self.link_to_obj(check_url, parent_url, request_obj.status_code))
                     self.count += 1
-                    # print(self.broken_links[-1])
                 else:
-                    # print("NOT BROKEN: link " + URL + " from " + parentURL)
                     if urlparse(check_url).netloc == domain_to_search:
                         for link in self.get_links_from_html(request_obj.text):
                             self.find_broken_links(domain_to_search, urljoin(check_url, link), check_url)
