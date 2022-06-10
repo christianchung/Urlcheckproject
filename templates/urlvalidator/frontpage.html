@@ -61,7 +61,8 @@
             format(data) {
                 let string = '';
                 for (let link of data.broken_links) {
-                    string = string.concat("Error(", link.status_code, "): ", link.url, " from ", link.parent_url, "\n\n")
+                    string = string.concat("Error(", link.status_code, ") ","\n", "URL: ", link.url,
+                        "\n","Parent URL: ", link.parent_url, "\n\n\n")
                 }
                 return string
             },
