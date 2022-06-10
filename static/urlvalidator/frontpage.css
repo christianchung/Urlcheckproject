@@ -5,12 +5,13 @@
       margin: 0;
       font-family: Roboto, Arial, sans-serif;
       font-size: 14px;
-      color: #666;
+      color: #666
       }
       h1 {
       margin: 0 0 20px;
       font-weight: 400;
       color: #1c87c9;
+            text-align: center;
       }
       p {
       margin: 0 0 5px;
@@ -79,6 +80,11 @@
       }
       .fa-mail-bulk {
       margin-top: 2%;
-      margin-left: 28%;
+      margin-left: 28%
       }
+      }
+
+      #loading-zone{
+            text-align: center;
+            visibility: hidden;
       }
