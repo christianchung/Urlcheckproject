@@ -9,16 +9,6 @@
     <link rel="stylesheet" type="text/css" href="/static/urlvalidator/frontpage.css">
 </head>
 
-<script>
-
-    function appear(){
-
-        document.getElementById("loading-zone").style.visibility = "visible";
-
-    }
-
-</script>
-
 <body>
 <div id="app">
     <div class="main-block">
@@ -27,22 +17,19 @@
             <i class="fas fa-at"></i>
             <i class="fas fa-mail-bulk"></i>
         </div>
-        <form class="entries" action="/check" enctype="multipart/form-data">
-        <div class="form-block">
+        <div class="form-block entries">
             <h1>Url Checker</h1>
             <div class="info">
                 <label>
                     <input type="text" name="address" id="address">
                 </label>
             </div>
-            <input onclick="appear()" type="submit" value="Submit" aria-busy="true">
-            <main id="loading-zone" aria-busy="true">
-        <progress aria-describedby="loading-zone"></progress>
-    </main>
-        </form>
             <input type="button" value="Submit" @click="getData">
-        </div>
+            <main id="loading-zone" aria-busy="true">
+                <progress aria-describedby="loading-zone"></progress>
+            </main>
 
+        </div>
     </div>
 </div>
 <script type="module">
@@ -58,16 +45,20 @@
         computed: {},
         methods: {
             async getData() {
+                this.appear()
                 await fetch("/check?" +
                     new URLSearchParams({address: document.getElementById("address").value}), {method: "GET"})
                     .then(data => data.json())
-                    .then(data => this.download(data))
+                    .then(data => {
+                        this.download(data)
+                        this.appear()
+                    })
 
             },
-            format(data){
+            format(data) {
                 let string = '';
-                for(let link of data.broken_links){
-                    string = string.concat("Error(", link.status_code, "): " , link.url, " from ", link.parent_url, "\n")
+                for (let link of data.broken_links) {
+                    string = string.concat("Error(", link.status_code, "): ", link.url, " from ", link.parent_url, "\n")
                 }
                 return string
             },
@@ -79,6 +70,15 @@
                 document.body.appendChild(element);
                 element.click();
                 document.body.removeChild(element);
+            },
+            appear() {
+                const elem = document.getElementById("loading-zone")
+                if(elem.style.visibility !== "visible"){
+                    elem.style.visibility = "visible";
+                } else {
+                  elem.style.visibility = "hidden";
+                }
+
             }
         }
     })
