@@ -1,17 +1,27 @@
-import hashlib
+import json
 import os
-import re
 import time
-from pathlib import Path
-
-from bs4.dammit import EncodingDetector
 from django.http import JsonResponse
 from django.shortcuts import render
 import requests
 from bs4 import BeautifulSoup
-from urllib.parse import urlparse, urlunparse
+from urllib.parse import urlparse
 from urllib.parse import urljoin
 import multiprocessing as mp
+
+from selenium.webdriver import DesiredCapabilities
+from selenium.webdriver.chrome.options import Options
+from selenium import webdriver
+
+
+def browser():
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
+    caps = DesiredCapabilities.CHROME
+    caps["goog:loggingPrefs"] = {'performance': 'ALL'}
+    driver = webdriver.Chrome('/usr/local/bin/chromedriver', chrome_options=chrome_options, desired_capabilities=caps)
+    driver.set_page_load_timeout(30)
+    return driver
 
 
 def get_scrape(request):
@@ -22,6 +32,7 @@ def get_scrape(request):
     broken = manager.list()
     jobs = []
     job_queue.put({"url": address, "parent": address})
+
     for i in range(os.cpu_count() - 1):
         p = Worker(job_queue, urlparse(address).netloc, searched, broken)
         jobs.append(p)
@@ -29,6 +40,23 @@ def get_scrape(request):
     for j in jobs:
         j.join()
     return JsonResponse({"broken_links": list(broken)})
+
+
+def scrape_url(address):
+    job_queue = mp.Queue()
+    manager = mp.Manager()
+    searched = manager.list()
+    broken = manager.list()
+    jobs = []
+    job_queue.put({"url": address, "parent": address})
+
+    for i in range(os.cpu_count() - 1):
+        p = Worker(job_queue, urlparse(address).netloc, searched, broken)
+        jobs.append(p)
+        p.start()
+    for j in jobs:
+        j.join()
+    print(list(broken))
 
 
 def index(request):
@@ -60,6 +88,7 @@ class Worker(mp.Process):
         }
 
     def run(self):
+        driver = browser()
         while True:
             if self.job_queue.empty():
                 time.sleep(3)
@@ -74,15 +103,21 @@ class Worker(mp.Process):
                     not url.endswith(".jpeg")):
                 self.searched.append(url)
                 try:
-                    page = requests.get(url, timeout=3, headers={
-                        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36 QIHU 360SE'
-                    })
-                    if page.status_code > 299:
-                        self.broken.append(self.link_to_obj(url, parent, page.status_code))
+                    print(url)
+                    driver.get(url)
+                    status_code = requests.get(url, timeout=3).status_code
+                    if status_code > 299:
+                        self.broken.append(self.link_to_obj(url, parent, status_code))
                     else:
                         if urlparse(url).netloc == self.domain:
-                            for link in self.get_links_from_html(page.text):
+                            for link in self.get_links_from_html(driver.page_source):
                                 self.job_queue.put({"url": urljoin(url, link), "parent": url})
-                except requests.RequestException:
+                except requests.RequestException as err:
+                    print(err)
                     pass
+        driver.close()
         self.close()
+
+
+if __name__ == '__main__':
+    scrape_url("https://www.jacobpartin.com")
