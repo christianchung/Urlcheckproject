@@ -87,13 +87,23 @@ class Worker(mp.Process):
             'status_code': status_code
         }
 
+    def attempt(self, attempts):
+        if self.job_queue.empty():
+            time.sleep(1)
+            if self.job_queue.empty():
+                if int(attempts) >= 10:
+                    return True
+                else:
+                    tempt = int(attempts)
+                    tempt = tempt + 1
+                    return self.attempt(tempt)
+        return False
+
     def run(self):
         driver = browser()
         while True:
-            if self.job_queue.empty():
-                time.sleep(3)
-                if self.job_queue.empty():
-                    break
+            if self.attempt(0):
+                break
             queue = self.job_queue.get()
             url = queue["url"]
             parent = queue["parent"]
@@ -103,7 +113,6 @@ class Worker(mp.Process):
                     not url.endswith(".jpeg")):
                 self.searched.append(url)
                 try:
-                    print(url)
                     driver.get(url)
                     status_code = requests.get(url, timeout=3).status_code
                     if status_code > 299:
@@ -117,7 +126,3 @@ class Worker(mp.Process):
                     pass
         driver.close()
         self.close()
-
-
-if __name__ == '__main__':
-    scrape_url("https://www.jacobpartin.com")
